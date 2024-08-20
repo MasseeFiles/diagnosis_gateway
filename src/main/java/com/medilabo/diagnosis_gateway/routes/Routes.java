@@ -13,87 +13,109 @@ import java.net.URI;
 
 @Configuration
 public class Routes {
-//Service View
+
+    //Liste des patients - entry point
     @Bean
-    public RouterFunction<ServerResponse> diagnosisViewRoute1() {
-        return GatewayRouterFunctions.route("diagnosisView")
+    public RouterFunction<ServerResponse> gatewayToViewRoute1() {
+        return GatewayRouterFunctions.route("view")  // voir convention rest nommage but : /patients
+                .route(RequestPredicates.GET("/view"), HandlerFunctions.http("http://localhost:8082/list"))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> gatewayToViewRoute111() {
+        return GatewayRouterFunctions.route("list")  // voir convention rest nommage but : /patients
                 .route(RequestPredicates.GET("/list"), HandlerFunctions.http("http://localhost:8082/list"))
                 .build();
     }
 
+    //affichage Formulaire update Patient - redirection vers la view
+    //pas besoin, la vue veut juste les details d'un patient dans sa requete
+//    @Bean
+//    public RouterFunction<ServerResponse> gatewayToViewRoute2() {
+//        return RouterFunctions.route(
+//                RequestPredicates.POST("/updateForm/{id}"),
+//                request -> {
+//                    String patientId = request.pathVariable("id");
+//                    String targetUrl = "http://localhost:8082/updateForm/" + patientId;
+//                    return ServerResponse.temporaryRedirect(URI.create(targetUrl)).build();
+//                }
+//        );
+//    }
+
+    //Liste des patients - micro patient
+
     @Bean
-    public RouterFunction<ServerResponse> diagnosisPatientRoute11() {
-        return GatewayRouterFunctions.route("diagnosisPatient")
+    public RouterFunction<ServerResponse> gatewayToPatientRoute1() {
+        return GatewayRouterFunctions.route("patient")
                 .route(RequestPredicates.GET("/patient"), HandlerFunctions.http("http://localhost:8081/patient"))
                 .build();
     }
 
-//    @Bean
-//    public RouterFunction<ServerResponse> diagnosisViewRoute222() {
-//        return GatewayRouterFunctions.route("diagnosisView")
-//                .route(RequestPredicates.GET("/view?continue"), HandlerFunctions.http("http://localhost:8082/patient"))
-//                .build();
-//    }
+    //recherhce patient unique
+    @Bean
+    public RouterFunction<ServerResponse> gatewayToPatientRoute2() {
+        return RouterFunctions.route(
+                RequestPredicates.GET("/patient/{id}"),
+                request -> {
+                    String patientId = request.pathVariable("id");
+                    String targetUrl = "http://localhost:8081/patient/" + patientId;
+                    return ServerResponse.temporaryRedirect(URI.create(targetUrl)).build();
+                }
+        );
+    }
 
-//
-//
-//    @Bean
-//    public RouterFunction<ServerResponse> diagnosisPatientRoute2() {
-//        return RouterFunctions.route(
-//                RequestPredicates.GET("/patient/{id}"),
-//                request -> {
-//                    String patientId = request.pathVariable("id");
-//                    String targetUrl = "http://localhost:8081/patient/" + patientId;
-//                    return ServerResponse.temporaryRedirect(URI.create(targetUrl)).build();
-//                }
-//        );
-//    }
-//
-//    @Bean
-//    public RouterFunction<ServerResponse> diagnosisPatientRoute3() {
-//        return RouterFunctions.route(
-//                RequestPredicates.PUT("/patient/{id}"),
-//                request -> {
-//                    String patientId = request.pathVariable("id");
-//                    String targetUrl = "http://localhost:8081/patient/" + patientId;
-//                    return ServerResponse.temporaryRedirect(URI.create(targetUrl)).build();
-//                }
-//        );
-//    }
-//
-//    @Bean
-//    public RouterFunction<ServerResponse> diagnosisRiskRoute1() {
-//        return RouterFunctions.route(
-//                RequestPredicates.GET("/risk/{id}"),
-//                request -> {
-//                    String patientId = request.pathVariable("id");
-//                    String targetUrl = "http://localhost:8085/risk/" + patientId;
-//                    return ServerResponse.temporaryRedirect(URI.create(targetUrl)).build();
-//                }
-//        );
-//    }
-//
-//    @Bean
-//    public RouterFunction<ServerResponse> diagnosisNoteRoute1() {
-//        return RouterFunctions.route(
-//                RequestPredicates.GET("/note/{id}"),
-//                request -> {
-//                    String patientId = request.pathVariable("id");
-//                    String targetUrl = "http://localhost:8083/note/" + patientId;
-//                    return ServerResponse.temporaryRedirect(URI.create(targetUrl)).build();
-//                }
-//        );
-//    }
-//
-//    @Bean
-//    public RouterFunction<ServerResponse> diagnosisNoteRoute2() {
-//        return RouterFunctions.route(
-//                RequestPredicates.POST("/note/add/{id}"),
-//                request -> {
-//                    String patientId = request.pathVariable("id");
-//                    String targetUrl = "http://localhost:8083/note/add/" + patientId;
-//                    return ServerResponse.temporaryRedirect(URI.create(targetUrl)).build();
-//                }
-//        );
-//    }
+    //persistence des données d'un patient
+    @Bean
+    public RouterFunction<ServerResponse> gatewayToPatientRoute3() {
+        return RouterFunctions.route(
+                RequestPredicates.PUT("/patient/{id}"),
+                request -> {
+                    String patientId = request.pathVariable("id");
+                    String targetUrl = "http://localhost:8081/patient/" + patientId;
+                    return ServerResponse.temporaryRedirect(URI.create(targetUrl)).build();
+                }
+        );
+    }
+
+        @Bean
+    public RouterFunction<ServerResponse> gatewayToRiskRoute1() {
+        return RouterFunctions.route(
+                RequestPredicates.GET("/risk/{id}"),
+                request -> {
+                    String patientId = request.pathVariable("id");
+                    String targetUrl = "http://localhost:8085/risk/" + patientId;
+                    return ServerResponse.temporaryRedirect(URI.create(targetUrl)).build();
+                }
+        );
+    }
+
+    //Voir Notes du patient
+    @Bean
+    public RouterFunction<ServerResponse> gatewayToNoteRoute1() {
+        return RouterFunctions.route(
+                RequestPredicates.GET("/note/{id}"),
+                request -> {
+                    String patientId = request.pathVariable("id");
+                    String targetUrl = "http://localhost:8083/note/" + patientId;
+                    return ServerResponse.temporaryRedirect(URI.create(targetUrl)).build();
+                }
+        );
+    }
+
+    //persister note en base
+    @Bean
+    public RouterFunction<ServerResponse> gatewayToNoteRoute2() {
+        return RouterFunctions.route(
+                RequestPredicates.POST("/note/add/{id}"),
+                request -> {
+                    String patientId = request.pathVariable("id");
+                    String targetUrl = "http://localhost:8083/note/add" + patientId;
+                    return ServerResponse.temporaryRedirect(URI.create(targetUrl)).build();
+                }
+        );
+    }
+
+
+
 }

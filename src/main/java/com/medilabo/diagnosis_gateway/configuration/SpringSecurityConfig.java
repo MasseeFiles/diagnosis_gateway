@@ -26,39 +26,21 @@ public class SpringSecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/css/**", "/logoPMB.png").permitAll() // Autorise l'accès sans authentification
-                                .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
-//                                .anyRequest().permitAll()
+                                .requestMatchers("/css/**", "/p1.png", "/favicon.ico").permitAll() // Autorise l'accès sans authentification
+//                                .requestMatchers("/**").authenticated()
+//                                .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
+                                .anyRequest().permitAll()
                 )
                 .formLogin(withDefaults()
-                );
-
-//                .formLogin((form) -> form
-//                        .loginPage("/login")
-////                        .usernameParameter("username") //definit dans le form la valeur considérée par spring comme un username
-////                        .passwordParameter("password")
-////                        .defaultSuccessUrl("/transfer") // definit la page à afficher si authentification ok
-//                                .successHandler(customAuthenticationSuccessHandler())
-//
-//                                .permitAll()
-//                );
-
-
-
-
-
-
+                )
 //                .logout(LogoutConfigurer::permitAll // Permet de se déconnecter
 //                );
-//                .csrf(csrf -> csrf.disable()); // Désactive la protection CSRF (à ne faire que si nécessaire)
+                .csrf(csrf -> csrf.disable()    // Désactive la protection CSRF (à ne faire que si nécessaire)
+                );
 
         return http.build();
-    }
 
-//    @Bean
-//    public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-//        return new CustomAuthenticationSuccessHandler();
-//    }
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
