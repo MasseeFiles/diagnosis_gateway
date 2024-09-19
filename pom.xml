@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.medilabo</groupId>
-    <artifactId>diagnosis_gateway</artifactId>
+    <artifactId>diagnosis-gateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>diagnosis_gateway</name>
     <description>Demo project for Spring Boot</description>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway</artifactId>
-            <version>4.1.4</version>
+            <version>4.1.5</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

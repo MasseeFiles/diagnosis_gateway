@@ -16,20 +16,19 @@ COPY src /diagnosis_gateway/src
 RUN mvn clean package -DskipTests
 
 
-
 #################### STAGE 2 : Execution de l'appli ####################
 FROM openjdk:21-jdk-slim
 
 WORKDIR /diagnosis_gateway
 
 # Copie du fichier packagé (jar) vers le fichier de travail
-COPY --from=build /diagnosis_gateway/target/diagnosis_gateway-0.0.1-SNAPSHOT.jar /diagnosis_gateway/diagnosis_gateway.jar
+COPY --from=build /diagnosis_gateway/target/diagnosis-gateway-0.0.1-SNAPSHOT.jar /diagnosis_gateway/diagnosis-gateway.jar
 
 # Exposition du port d'accès à l'appli
-EXPOSE 8082
+EXPOSE 8084
 
 #RUN de l'appli (par defaut au demarrage)
-ENTRYPOINT ["java", "-Dspring.config.location=classpath:/application.properties", "-jar", "diagnosis_gateway.jar"]
+ENTRYPOINT ["java", "-Dspring.config.location=classpath:/application.properties", "-jar", "diagnosis-gateway.jar"]
 
 
 

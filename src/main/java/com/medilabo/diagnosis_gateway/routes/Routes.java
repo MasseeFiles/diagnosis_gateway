@@ -1,170 +1,281 @@
 package com.medilabo.diagnosis_gateway.routes;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Configuration
 public class Routes {
+    /**
+     * Gateway to View microservice routes :
+     * Redirections vers le microservice diagnosis-view
+     */
+    @Value("${VIEW_IP}")
+    private String viewIp;
 
-    //   VIEW Service routes
-    //    demande affichage des infos de tous les patients - redirection vers la view
+    @Value("${VIEW_PORT}")
+    private int viewPort;
+
     @Bean
     public RouteLocator gatewayToViewRoute1(RouteLocatorBuilder builder) {
+        String uriView = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(viewIp)
+                .port(viewPort)
+                .build()
+                .toUriString();
+
         return builder.routes()
                 .route("view_service_1", r -> r
-                        .method(HttpMethod.GET) // Match GET requests
+                        .method(HttpMethod.GET)
                         .and()
-                        .path("/viewService/patientList") // Define the path predicate
-                        .uri("http://localhost:8082") // Define the URI to forward to
+                        .path("/view/patientList")
+                        .uri(uriView)
                 )
                 .build();
     }
 
-        //    affichage Formulaire update Patient - redirection vers la view
     @Bean
     public RouteLocator gatewayToViewRoute2(RouteLocatorBuilder builder) {
+        String uriView = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(viewIp)
+                .port(viewPort)
+                .build()
+                .toUriString();
+
         return builder.routes()
                 .route("view_service_2", r -> r
-                        .method(HttpMethod.GET) // Match GET requests
+                        .method(HttpMethod.GET)
                         .and()
-                        .path("/viewService/updateFormPatient/{id}") // Define the path predicate
-                        .uri("http://localhost:8082") // Define the URI to forward to
+                        .path("/view/updateFormPatient/{id}")
+                        .uri(uriView)
                 )
                 .build();
     }
 
-        //    demande de persistence en base de patient  - redirection vers la view
     @Bean
     public RouteLocator gatewayToViewRoute3(RouteLocatorBuilder builder) {
+        String uriView = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(viewIp)
+                .port(viewPort)
+                .build()
+                .toUriString();
+
         return builder.routes()
                 .route("view_service_3", r -> r
-                        .method(HttpMethod.POST) // Match GET requests
+                        .method(HttpMethod.POST)
                         .and()
-                        .path("/viewService/updatePatient/{id}") // Define the path predicate
-                        .uri("http://localhost:8082") // Define the URI to forward to
+                        .path("/view/updatePatient/{id}")
+                        .uri(uriView)
                 )
                 .build();
     }
 
-        //Voir toutes les Notes du patient - concerne view
     @Bean
     public RouteLocator gatewayToViewRoute4(RouteLocatorBuilder builder) {
+        String uriView = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(viewIp)
+                .port(viewPort)
+                .build()
+                .toUriString();
+
         return builder.routes()
                 .route("view_service_4", r -> r
-                        .method(HttpMethod.GET) // Match GET requests
-                        .and()
-                        .path("/viewService/listNote/{id}") // Define the path predicate
-                        .uri("http://localhost:8082") // Define the URI to forward to
+                                .method(HttpMethod.GET)
+                                .and()
+                                .path("/view/listNote/{id}")
+                                .uri(uriView)
                 )
                 .build();
     }
 
-    //Voir formulaire NoteForm - concerne view
     @Bean
     public RouteLocator gatewayToViewRoute5(RouteLocatorBuilder builder) {
+        String uriView = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(viewIp)
+                .port(viewPort)
+                .build()
+                .toUriString();
+
         return builder.routes()
                 .route("view_service_5", r -> r
-                        .method(HttpMethod.POST) // Match GET requests
+                        .method(HttpMethod.POST)
                         .and()
-                        .path("/viewService/noteForm/{id}") // Define the path predicate
-                        .uri("http://localhost:8082") // Define the URI to forward to
+                        .path("/view/noteForm/{id}")
+                        .uri(uriView)
                 )
                 .build();
     }
 
-        //persister une notes du patient - concerne view
     @Bean
     public RouteLocator gatewayToViewRoute6(RouteLocatorBuilder builder) {
+        String uriView = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(viewIp)
+                .port(viewPort)
+                .build()
+                .toUriString();
+
         return builder.routes()
                 .route("view_service_6", r -> r
-                        .method(HttpMethod.POST) // Match GET requests
+                        .method(HttpMethod.POST)
                         .and()
-                        .path("/viewService/addNote") // Define the path predicate
-                        .uri("http://localhost:8082") // Define the URI to forward to
+                        .path("/view/addNote")
+                        .uri(uriView)
                 )
                 .build();
     }
 
+    /**
+     * Gateway to Patient microservice routes :
+     * Redirections vers le microservice diagnosis-patient
+     */
+    @Value("${PATIENT_IP}")
+    private String patientIp;
 
-//PATIENT service
-    //Liste des data des tous les patients - micro patient
+    @Value("${PATIENT_PORT}")
+    private int patientPort;
+
     @Bean
     public RouteLocator gatewayToPatientRoute1(RouteLocatorBuilder builder) {
+        String uriPatient = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(patientIp)
+                .port(patientPort)
+                .build()
+                .toUriString();
+
         return builder.routes()
                 .route("patient_service_1", r -> r
-                        .method(HttpMethod.GET) // Match GET requests
+                        .method(HttpMethod.GET)
                         .and()
-                        .path("/patientService") // Define the path predicate
-                        .uri("http://localhost:8081") // Define the URI to forward to
+                        .path("/patients")
+                        .uri(uriPatient)
                 )
                 .build();
     }
 
-//    //recherche patient unique
     @Bean
     public RouteLocator gatewayToPatientRoute2(RouteLocatorBuilder builder) {
+        String uriPatient = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(patientIp)
+                .port(patientPort)
+                .build()
+                .toUriString();
+
         return builder.routes()
                 .route("patient_service_2", r -> r
                         .method(HttpMethod.GET) // Match GET requests
                         .and()
-                        .path("/patientService/{id}") // Define the path predicate
-                        .uri("http://localhost:8081") // Define the URI to forward to
+                        .path("/patients/{id}")
+                        .uri(uriPatient)
                 )
                 .build();
     }
 
-        //persistence des données d'un patient
     @Bean
     public RouteLocator gatewayToPatientRoute3(RouteLocatorBuilder builder) {
+        String uriPatient = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(patientIp)
+                .port(patientPort)
+                .build()
+                .toUriString();
+
         return builder.routes()
                 .route("patient_service_3", r -> r
-                        .method(HttpMethod.PUT) // Match GET requests
+                        .method(HttpMethod.PUT)
                         .and()
-                        .path("/patientService/{id}") // Define the path predicate
-                        .uri("http://localhost:8081") // Define the URI to forward to
+                        .path("/patients/{id}")
+                        .uri(uriPatient)
                 )
                 .build();
     }
 
-        //NOTE service
-    //recuperer notes du patient - concerne micro note
+    /**
+     * Gateway to Note microservice routes :
+     * Redirections vers le microservice diagnosis-notes
+     */
+    @Value("${NOTE_IP}")
+    private String noteIp;
+
+    @Value("${NOTE_PORT}")
+    private int notePort;
+
     @Bean
     public RouteLocator gatewayToNoteRoute1(RouteLocatorBuilder builder) {
+        String uriNote = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(noteIp)
+                .port(notePort)
+                .build()
+                .toUriString();
+
         return builder.routes()
                 .route("note_service_1", r -> r
-                        .method(HttpMethod.GET) // Match GET requests
+                        .method(HttpMethod.GET)
                         .and()
-                        .path("/noteService/{id}") // Define the path predicate
-                        .uri("http://localhost:8083") // Define the URI to forward to
+                        .path("/notes/{id}")
+                        .uri(uriNote)
                 )
                 .build();
     }
 
-  //persister note en base  - concerne micro note
     @Bean
     public RouteLocator gatewayToNoteRoute2(RouteLocatorBuilder builder) {
+        String uriNote = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(noteIp)
+                .port(notePort)
+                .build()
+                .toUriString();
+
         return builder.routes()
                 .route("note_service_2", r -> r
-                        .method(HttpMethod.POST) // Match GET requests
+                        .method(HttpMethod.POST)
                         .and()
-                        .path("/noteService/add/{id}") // Define the path predicate
-                        .uri("http://localhost:8083") // Define the URI to forward to
+                        .path("/notes/{id}")
+                        .uri(uriNote)
                 )
                 .build();
     }
+
+    /**
+     * Gateway to Risk microservice routes :
+     * Redirections vers le microservice diagnosis-risk
+     */
+    @Value("${RISK_IP}")
+    private String riskIp;
+
+    @Value("${RISK_PORT}")
+    private int riskPort;
 
     @Bean
     public RouteLocator gatewayToRiskRout1(RouteLocatorBuilder builder) {
+        String uriRisk = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(riskIp)
+                .port(riskPort)
+                .build()
+                .toUriString();
+
         return builder.routes()
-                .route("risk_service_route", r -> r
-                                .method(HttpMethod.GET) // Match GET requests
-                                .and()
-                                .path("/riskService/{id}")
-                                .uri("http://localhost:8085")
+                .route("risk_service_1", r -> r
+                        .method(HttpMethod.GET)
+                        .and()
+                        .path("/risks/{id}")
+                        .uri(uriRisk)
                 )
                 .build();
     }
+
 }
