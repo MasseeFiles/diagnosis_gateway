@@ -7,6 +7,9 @@ DIAGNOSIS est une application d'aide à la détection du diabète de type 2 comp
 ### Point d'entrée de l'appli (URI):
 http://localhost:8084/view/patientList
 
+### Port
+Le microservice GATEWAY est exposé sur le port 8084.
+
 ### Spring Security 
 
 La configuration de Spring Security contenue dans ce microservice contient un utilisateur en mémoire pour tester la procédure d'authentification de l'appli. Ci-dessous les identifiants à entrer à la premiere connexion :
