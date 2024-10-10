@@ -11,11 +11,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Configuration
 public class Routes {
 
-//    private final AuthenticationFilter filter;
-
-
-
-
     /**
      * Gateway to View microservice routes :
      * Redirections vers le microservice diagnosis-view
@@ -40,10 +35,6 @@ public class Routes {
                                 .method(HttpMethod.GET)
                                 .and()
                                 .path("/view/patientList")
-
-//                      ajout du filter pour authentication process - a mettre dans tt les routes
-//                                .filters(f -> f.filter(filter))
-
                                 .uri(uriView)
                 )
                 .build();

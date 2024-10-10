@@ -10,10 +10,11 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 /**
- * Bean userDetailsService sert à implémenter l'interface UserDetailService, utilisée
- dans la procedure d'authentification.
+ * Bean CustomUserDetailService sert à implémenter l'interface ReactiveUserDetailsService. Utilisé
+ * pour indiquer à Spring Security où récuperer les données des utilisateurs pouvant accès à l'appli
+ * (ici, dans une BDD) pour les comparer aux données fournies lors de la procédure d'authenthification.
  *
- * @see SecurityConfig2
+ * @see SpringSecurityConfig
  */
 @Service
 public class CustomUserDetailService implements ReactiveUserDetailsService {
