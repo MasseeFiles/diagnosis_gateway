@@ -22,4 +22,13 @@ public class UserApp {
     private String password;
     private String role;
 
+    @Override
+    public String toString() {
+        return "UserApp{" +
+                "userId=" + userId +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                '}';
+    }
 }

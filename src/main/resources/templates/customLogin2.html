@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Page</title>
+  <style>
+    /* Styles généraux */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    /* Conteneur pour le formulaire */
+    .login-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+
+    .login-container form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .login-container label {
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .login-container input[type="text"],
+    .login-container input[type="password"] {
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .login-container button {
+      padding: 10px;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .login-container button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Message d'erreur */
+    .error-message {
+      color: red;
+      font-size: 14px;
+      text-align: center;
+    }
+  </style>
+
+  <script>
+    async function handleLogin(event) {
+      event.preventDefault();
+      const username = document.querySelector('input[name="username"]').value;
+      const password = document.querySelector('input[name="password"]').value;
+
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username: username, password: password })
+      });
+
+      if (response.ok) {
+        const jwtToken = response.headers.get('Authorization');
+
+        if (jwtToken) {
+          localStorage.setItem('token', jwtToken);
+          window.location.href = "/view/patientList";
+        } else {
+          document.getElementById('error-message').innerText = 'Login succeeded, but no token was received!';
+        }
+      } else {
+        document.getElementById('error-message').innerText = 'Invalid username or password.';
+      }
+    }
+  </script>
+</head>
+<body>
+
+<div class="login-container">
+  <h1>Login</h1>
+  <form id="loginForm" onsubmit="handleLogin(event)">
+    <div>
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required/>
+    </div>
+    <div>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required/>
+    </div>
+    <div>
+      <button type="submit">Login</button>
+    </div>
+  </form>
+  <p id="error-message" class="error-message"></p>
+</div>
+
+</body>
+</html>
