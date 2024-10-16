@@ -16,12 +16,16 @@ import org.springframework.security.web.server.context.NoOpServerSecurityContext
 
 /**
  * Classe de configuration de la couche Spring Security.
- * Les règles d'autorisation sont basées sur l'attribut ROLE du UserApp (accès complet
- * pour le role DOCTOR).
- * Implementation d'un mechanisme d'authentification stateless avec la methode
- * httpbasic() : renvoie une string encodée (Base64) dans le header Authorization.
- * Injection d'une classe  CustomUserDetailService pour récupérer les données des patients
+ *
+ * Les règles d'autorisation sont basées sur l'attribut ROLE du UserApp.
+ *
+ * Implementation d'un mechanisme d'authentification stateless avec l'utilisation d'un
+ * webFilter
+ * @see JWTAuthenticationWebFilter
+ *
+ * Injection d'une classe CustomUserDetailService pour récupérer les données des patients
  * dans une BDD.
+ * @see CustomUserDetailService
  */
 @Configuration
 @EnableWebFluxSecurity
@@ -45,16 +49,17 @@ public class SpringSecurityConfig {
                 //csrf desactivé car basé sur des sessions.
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
 
+                // Stateless session management par defaut dans une aplli basée sur webflux donc pas besoin de configurer le session management ????????????
+
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())  // This disables session management
 
                 .authorizeExchange(exchange -> exchange
                         /**
                          * Regles d'autorisation : basé sur l'attribut Role du UserApp.
                          */
-//                        .pathMatchers("/view/listNote/**").hasRole("DOCTOR")
-//                        .pathMatchers("/view/noteForm/**").hasRole("DOCTOR")
-//                        .pathMatchers("/view/addNote/**").hasRole("DOCTOR")
-
+                        .pathMatchers("/view/noteForm/**").hasRole("DOCTOR")
+                        .pathMatchers("/view/addNote/**").hasRole("DOCTOR")
+                        //pour permettre acces au formulaire d'authentification
                         .pathMatchers("/login", "/favicon.ico").permitAll()
 
                         /**
@@ -73,27 +78,20 @@ public class SpringSecurityConfig {
 //        By placing the JWT filter after form login, you ensure that form login processes the
 //        initial authentication. After that, the JWT filter kicks in for all future requests
 //        with the token.
-                .addFilterAt(jwtAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);  // Add JWT filter
+                .addFilterAt(jwtAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
 
         return http.build();
     }
 
-//                // Stateless session management par defaut dans une aplli basée sur webflux donc pas besoin de configurer le session management
-//                .sessionManagement(session -> session
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                )
-
-
-
+//implementation du mechanisme d'authentification
     @Bean
     public ReactiveAuthenticationManager authenticationManager(PasswordEncoder passwordEncoder) {
-        //recuperation des infos d'un user en fonction de son username
+        //UserDetailsRepositoryReactiveAuthenticationManager est une implementation de ReactiveAuthenticationManager.
         UserDetailsRepositoryReactiveAuthenticationManager authManager =
                 new UserDetailsRepositoryReactiveAuthenticationManager(customUserDetailService);
-        //overide methode pour recherche dans le body de username
-
 
         authManager.setPasswordEncoder(passwordEncoder);
+
         return authManager;
     }
 

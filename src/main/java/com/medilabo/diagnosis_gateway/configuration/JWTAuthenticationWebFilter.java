@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 
 // filter to handle the JWT from subsequent requests.
 
-//Extracting the JWT from the Authorization header.
+//Extracting the JWT from the Authorization header if not null.
 //        Validating the token - le met dans le securitycontextholder
 //        Creating an Authentication object if the token is valid and setting it in the security context.
 @Component
@@ -27,8 +27,9 @@ public class JWTAuthenticationWebFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         // Extract JWT token from the Authorization header
         String token = extractToken(exchange);
+        System.out.println("JWTUtil - Token found in incoming request : " + token);
 
-        // Validate the JWT token
+        // Validate the JWT token, build an authentication object with it , and put it in the security context
         if (token != null && jwtUtil.isTokenValid(token)) {
             // Create an Authentication object if the JWT is valid
             Authentication authentication = jwtUtil.getAuthentication(token);

@@ -26,7 +26,7 @@ public class JWTAuthenticationSuccessHandler implements ServerAuthenticationSucc
         //Generation du JWT Token
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String jwtToken = jwtUtil.generateToken(userDetails);  // generating a JWT token for the authenticated user
-        System.out.println("JWT token created : " + jwtToken);
+        System.out.println("SuccessHandler : JWT token created : " + jwtToken);
 
         // Add the JWT token to the response header
         ServerWebExchange exchange = webFilterExchange.getExchange();
