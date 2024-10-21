@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-
 public class UserApp {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,4 +30,5 @@ public class UserApp {
                 ", role='" + role + '\'' +
                 '}';
     }
+
 }

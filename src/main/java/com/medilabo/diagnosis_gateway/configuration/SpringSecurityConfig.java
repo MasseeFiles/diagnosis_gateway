@@ -31,9 +31,6 @@ import org.springframework.security.web.server.context.NoOpServerSecurityContext
 @EnableWebFluxSecurity
 public class SpringSecurityConfig {
 
-//    @Autowired
-//    private CustomAuthenticationConverter customAuthenticationConverter;
-
     @Autowired
     private CustomUserDetailService customUserDetailService;
 
@@ -78,6 +75,7 @@ public class SpringSecurityConfig {
 //        By placing the JWT filter after form login, you ensure that form login processes the
 //        initial authentication. After that, the JWT filter kicks in for all future requests
 //        with the token.
+                //jwtAuthenticationWebFilter REMPLACE le filter par defaut (UsernamePasswordAuthenticationFilter)
                 .addFilterAt(jwtAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
 
         return http.build();

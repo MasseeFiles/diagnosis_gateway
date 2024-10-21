@@ -15,11 +15,13 @@ public class Routes {
      * Gateway to View microservice routes :
      * Redirections vers le microservice diagnosis-view
      */
-    @Value("${VIEW_IP}")
-    private String viewIp;
+//    @Value("${VIEW_IP}")
+//    private String viewIp;
+    private String viewIp = "localHost";
 
-    @Value("${VIEW_PORT}")
-    private int viewPort;
+//    @Value("${VIEW_PORT}")
+//    private int viewPort;
+    private int viewPort = 8082;
 
     @Bean
     public RouteLocator gatewayToViewRoute1(RouteLocatorBuilder builder) {
@@ -139,11 +141,13 @@ public class Routes {
      * Gateway to Patient microservice routes :
      * Redirections vers le microservice diagnosis-patient
      */
-    @Value("${PATIENT_IP}")
-    private String patientIp;
+//    @Value("${PATIENT_IP}")
+//    private String patientIp;
+    private String patientIp = "localHost";
 
-    @Value("${PATIENT_PORT}")
-    private int patientPort;
+//    @Value("${PATIENT_PORT}")
+//    private int patientPort;
+    private int patientPort = 8081;
 
     @Bean
     public RouteLocator gatewayToPatientRoute1(RouteLocatorBuilder builder) {
@@ -206,11 +210,13 @@ public class Routes {
      * Gateway to Note microservice routes :
      * Redirections vers le microservice diagnosis-notes
      */
-    @Value("${NOTE_IP}")
-    private String noteIp;
+//    @Value("${NOTE_IP}")
+//    private String noteIp;
+    private String noteIp = "localHost";
 
-    @Value("${NOTE_PORT}")
-    private int notePort;
+//    @Value("${NOTE_PORT}")
+//    private int notePort;
+    private int notePort = 8083;
 
     @Bean
     public RouteLocator gatewayToNoteRoute1(RouteLocatorBuilder builder) {
@@ -254,11 +260,13 @@ public class Routes {
      * Gateway to Risk microservice routes :
      * Redirections vers le microservice diagnosis-risk
      */
-    @Value("${RISK_IP}")
-    private String riskIp;
+//    @Value("${RISK_IP}")
+//    private String riskIp;
+    private String riskIp = "localHost";
 
-    @Value("${RISK_PORT}")
-    private int riskPort;
+//    @Value("${RISK_PORT}")
+//    private int riskPort;
+    private int riskPort = 8085;
 
     @Bean
     public RouteLocator gatewayToRiskRout1(RouteLocatorBuilder builder) {
@@ -280,3 +288,4 @@ public class Routes {
     }
 
 }
+

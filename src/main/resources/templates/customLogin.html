@@ -71,12 +71,63 @@
             text-align: center;
         }
     </style>
+
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            // Get user credentials from the form
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            // Create login payload
+            const loginPayload = {
+                username: username,
+                password: password
+            };
+
+            try {
+                // Send login request to the server
+                //            const response = await fetch("/api/login", {
+                const response = await fetch("/api/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(loginPayload)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const jwtToken = data.token;
+
+                    // Store the JWT token in localStorage
+                    localStorage.setItem("jwtTokennew", jwtToken);
+
+                    // Redirect to a protected page or handle login success
+                    window.location.href = "/dashboard";
+                } else {
+                    alert("Login failed");
+                }
+            } catch (error) {
+                console.error("Error during login:", error);
+            }
+        });
+    </script>
+
+
+
+
+
+
 </head>
 <body>
 
 <div class="login-container">
     <h1>Diagnosis App : Please login</h1>
-    <form th:action="@{/login}" method="post">
+<!--    <form id="loginForm" th:action="@{/login}" method="post">-->
+    <form id="loginForm" method="post">
         <div>
             <label>Username:</label>
             <input type="text" name="username"/>
@@ -89,5 +140,13 @@
             <button type="submit">Login</button>
         </div>
     </form>
+    </div>
+
+
+
+
+
+
+
 </body>
 </html>

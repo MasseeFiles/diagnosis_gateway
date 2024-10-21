@@ -1,7 +1,11 @@
 package com.medilabo.diagnosis_gateway.configuration;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
@@ -12,27 +16,55 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-// filter to handle the JWT from subsequent requests.
+import java.util.List;
 
-//Extracting the JWT from the Authorization header if not null.
-//        Validating the token - le met dans le securitycontextholder
-//        Creating an Authentication object if the token is valid and setting it in the security context.
+/**
+ * Filter responsable de la gestion des tokens JWT transmis par les requetes HTTP entrantes.
+ *
+ * Il permet de vérifier si un token JWT est présent dans le Authorization header de la requete,
+ * de le valider, et de retourner un objet Authentication dans le
+ * SecurityContextHolder basé sur les claims du token.
+ * @see JwtUtil
+ */
 @Component
 public class JWTAuthenticationWebFilter implements WebFilter {
+
+    private static final Logger logger = LogManager.getLogger("JWTAuthenticationWebFilter");
 
     @Autowired
     private JwtUtil jwtUtil;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        // Extract JWT token from the Authorization header
-        String token = extractToken(exchange);
-        System.out.println("JWTUtil - Token found in incoming request : " + token);
 
-        // Validate the JWT token, build an authentication object with it , and put it in the security context
-        if (token != null && jwtUtil.isTokenValid(token)) {
+        //add cookie
+        ServerHttpRequest request = exchange.getRequest();
+
+        //add cookie
+        // 1. Try to get the JWT from the cookie
+        String jwtToken = exchange.getRequest().getCookies().getFirst("jwt-token") != null ?
+                exchange.getRequest().getCookies().getFirst("jwt-token").getValue() : null;
+
+        logger.info("Bearer token found in the cookie : " + jwtToken);
+
+
+        // 1. Try to get the JWT from the authentication header
+        if (jwtToken == null) {
+            List<String> authHeaders = request.getHeaders().getOrEmpty(HttpHeaders.AUTHORIZATION);
+            if (!authHeaders.isEmpty() && authHeaders.get(0).startsWith("Bearer ")) {
+                jwtToken = authHeaders.get(0).substring(7);  // Remove "Bearer " prefix
+            }
+        }
+
+//        //avant add cookie
+//        String token = extractToken(exchange);
+
+        logger.info("Bearer token found in incoming request : " + jwtToken);
+
+        // Validate the JWT jwtToken, build an authentication object with it , and put it in the security context
+        if (jwtToken != null && jwtUtil.isTokenValid(jwtToken)) {
             // Create an Authentication object if the JWT is valid
-            Authentication authentication = jwtUtil.getAuthentication(token);
+            Authentication authentication = jwtUtil.getAuthentication(jwtToken);
             SecurityContext securityContext = new SecurityContextImpl(authentication);
 
             // Set the security context with the authenticated user

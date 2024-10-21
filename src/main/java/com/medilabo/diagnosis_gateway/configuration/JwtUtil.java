@@ -17,11 +17,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * Classe fournissant les méthodes nécessaires à la manipulation du JWT : création
- * (à partir du UserDetails), parsing, validation et generation d'un objet authentication
- * (à partir du JWT).
- *
- * La durée de validité du token est fixée à 60 minutes
+ * Utilty class fournissant les méthodes nécessaires à la manipulation du JWT : validation,
+ * extraction des claims, vérification de l'expiration du token et generation d'un objet
+ * Authentication.
  */
 @Component
 public class JwtUtil {
