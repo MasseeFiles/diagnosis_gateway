@@ -13,9 +13,9 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 /**
- * Bean CustomUserDetailService sert à implémenter l'interface ReactiveUserDetailsService. Utilisé
+ * Bean CustomUserDetailService sert à implémenter l'interface ReactiveUserDetailsService. Il est utilisé
  * pour indiquer à Spring Security où récuperer les données des utilisateurs pouvant accès à l'appli
- * (ici, dans une BDD) pour les comparer aux données fournies lors de la procédure d'authenthification.
+ * (ici, dans une BDD) pour les comparer aux données fournies lors de la procédure d'authentification.
  *
  * @see SpringSecurityConfig
  */
@@ -29,14 +29,14 @@ public class CustomUserDetailService implements ReactiveUserDetailsService {
     public Mono<UserDetails> findByUsername(String username) {
         Optional<UserApp> userDetails = userCredentialsRepository.findByUsername(username);
         if (userDetails.isPresent()) {
-            return Mono.justOrEmpty(userCredentialsRepository.findByUsername(username))  // Convert Optional<UserApp> to Mono<UserApp>
+            return Mono.justOrEmpty(userCredentialsRepository.findByUsername(username))  // Conversion du Optional<UserApp> en Mono<UserApp>
                     .map(userFound -> User.builder()
                             .username(userFound.getUsername())
                             .password(userFound.getPassword())
                             .roles(userFound.getRole())
                             .build());
         } else {
-            return Mono.error(new UsernameNotFoundException("User not found in DB - Username used: " + username));
+            return Mono.error(new UsernameNotFoundException("Utilisateur non trouvé dans la BDD - Username: " + username));
         }
     }
 

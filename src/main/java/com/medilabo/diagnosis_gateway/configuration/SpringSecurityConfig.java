@@ -12,20 +12,23 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 
 /**
  * Classe de configuration de la couche Spring Security.
- *
- * Les règles d'autorisation sont basées sur l'attribut ROLE du UserApp.
- *
+ * <p>
  * Implementation d'un mechanisme d'authentification stateless avec l'utilisation d'un
  * webFilter
  * @see JWTAuthenticationWebFilter
- *
+ * <p>
  * Injection d'une classe CustomUserDetailService pour récupérer les données des patients
  * dans une BDD.
  * @see CustomUserDetailService
+ * <p>
+ * Injection d'une classe JWTAuthenticationSuccessHandler pour la gestion d'une
+ * authentification réussie.
+ * @see JWTAuthenticationSuccessHandler
+ *
+ * Les règles d'autorisation sont basées sur l'attribut ROLE du UserApp.
  */
 @Configuration
 @EnableWebFluxSecurity
@@ -38,25 +41,19 @@ public class SpringSecurityConfig {
     private JWTAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
 
     @Autowired
-    JWTAuthenticationWebFilter jwtAuthenticationWebFilter;
+    private JWTAuthenticationWebFilter jwtAuthenticationWebFilter;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
-                //csrf desactivé car basé sur des sessions.
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-
-                // Stateless session management par defaut dans une aplli basée sur webflux donc pas besoin de configurer le session management ????????????
-
-                .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())  // This disables session management
-
                 .authorizeExchange(exchange -> exchange
                         /**
                          * Regles d'autorisation : basé sur l'attribut Role du UserApp.
                          */
                         .pathMatchers("/view/noteForm/**").hasRole("DOCTOR")
                         .pathMatchers("/view/addNote/**").hasRole("DOCTOR")
-                        //pour permettre acces au formulaire d'authentification
+                        //Accès au formulaire d'authentification
                         .pathMatchers("/login", "/favicon.ico").permitAll()
 
                         /**
@@ -67,24 +64,16 @@ public class SpringSecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .authenticationSuccessHandler(jwtAuthenticationSuccessHandler)
-//                        .defaultSuccessUrl("/home", true) // Redirect to this URL after successful login
-
                 )
-
-//        Spring Security processes filters in the order they are defined in the filter chain.
-//        By placing the JWT filter after form login, you ensure that form login processes the
-//        initial authentication. After that, the JWT filter kicks in for all future requests
-//        with the token.
-                //jwtAuthenticationWebFilter REMPLACE le filter par defaut (UsernamePasswordAuthenticationFilter)
+                // Le jwtAuthenticationWebFilter remplace le filter par defaut de Spring Security (UsernamePasswordAuthenticationFilter)
                 .addFilterAt(jwtAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
 
         return http.build();
     }
 
-//implementation du mechanisme d'authentification
+    // Implementation du mechanisme d'authentification (ReactiveAuthenticationManager) par un UserDetailsRepositoryReactiveAuthenticationManager
     @Bean
     public ReactiveAuthenticationManager authenticationManager(PasswordEncoder passwordEncoder) {
-        //UserDetailsRepositoryReactiveAuthenticationManager est une implementation de ReactiveAuthenticationManager.
         UserDetailsRepositoryReactiveAuthenticationManager authManager =
                 new UserDetailsRepositoryReactiveAuthenticationManager(customUserDetailService);
 

@@ -1,7 +1,7 @@
 # DIAGNOSIS APP
 # _Microservice GATEWAY_
 
-DIAGNOSIS est une application d'aide à la détection du diabète de type 2 comportant 5 microservices (Gateway, View, Patient, Risk et Note). Le microservice GATEWAY a pour rôle de relier tous les microservices entre eux et d'assurer la sécurisation de leurs accès. Il contient le fichier docker-compose pour le démarrage de l'appli avec DOCKER.
+DIAGNOSIS est une application d'aide à la détection du diabète de type 2 comportant 5 microservices (Gateway, View, Patient, Risk et Note). Le microservice GATEWAY constitue le point d'entrée de l'appli et assurer la sécurisation de son accès. Il contient le fichier docker-compose pour le démarrage de l'appli avec DOCKER.
 
 
 ### Point d'entrée de l'appli (URI):
@@ -13,7 +13,7 @@ Le microservice GATEWAY est exposé sur le port 8084.
 
 
 ### Spring Security 
-La configuration de Spring Security contenue dans ce microservice permet de tester l'appli avec deux profils d'utilisateurs différents (DOCTOR et ASSISTANT) stockés dans une BDD. Ci-dessous les identifiants à entrer dans le formulaire d'authentification :
+La configuration de Spring Security contenue dans ce microservice permet de tester l'appli avec deux profils d'utilisateurs différents (DOCTOR et ASSISTANT) stockés dans une BDD MySQL. Ci-dessous les identifiants à entrer dans le formulaire d'authentification :
 
 Utilisateur DOCTOR
 - Login : doctor
@@ -22,10 +22,6 @@ Utilisateur DOCTOR
 Utilisateur ASSISTANT
 - Login : assistant
 - Password : 123
-
-
-### Architecture des microservices / Communication
-Tous les microservices sont codés en JAVA en suivant une architecture MVC. La communication entre eux se fait via des requetes HTTP qui transitent d'abord par la gateway avant d'être redirigées vers le microservice ciblé (voir class "Routes").
 
 
 ### Docker

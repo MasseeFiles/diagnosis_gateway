@@ -15,13 +15,13 @@ public class Routes {
      * Gateway to View microservice routes :
      * Redirections vers le microservice diagnosis-view
      */
-//    @Value("${VIEW_IP}")
-//    private String viewIp;
-    private String viewIp = "localHost";
+    @Value("${VIEW_IP}")
+    private String viewIp;
+//    private String viewIp = "localHost";
 
-//    @Value("${VIEW_PORT}")
-//    private int viewPort;
-    private int viewPort = 8082;
+    @Value("${VIEW_PORT}")
+    private int viewPort;
+//    private int viewPort = 8082;
 
     @Bean
     public RouteLocator gatewayToViewRoute1(RouteLocatorBuilder builder) {
@@ -137,155 +137,6 @@ public class Routes {
                 .build();
     }
 
-    /**
-     * Gateway to Patient microservice routes :
-     * Redirections vers le microservice diagnosis-patient
-     */
-//    @Value("${PATIENT_IP}")
-//    private String patientIp;
-    private String patientIp = "localHost";
-
-//    @Value("${PATIENT_PORT}")
-//    private int patientPort;
-    private int patientPort = 8081;
-
-    @Bean
-    public RouteLocator gatewayToPatientRoute1(RouteLocatorBuilder builder) {
-        String uriPatient = UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .host(patientIp)
-                .port(patientPort)
-                .build()
-                .toUriString();
-
-        return builder.routes()
-                .route("patient_service_1", r -> r
-                        .method(HttpMethod.GET)
-                        .and()
-                        .path("/patients")
-                        .uri(uriPatient)
-                )
-                .build();
-    }
-
-    @Bean
-    public RouteLocator gatewayToPatientRoute2(RouteLocatorBuilder builder) {
-        String uriPatient = UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .host(patientIp)
-                .port(patientPort)
-                .build()
-                .toUriString();
-
-        return builder.routes()
-                .route("patient_service_2", r -> r
-                        .method(HttpMethod.GET) // Match GET requests
-                        .and()
-                        .path("/patients/{id}")
-                        .uri(uriPatient)
-                )
-                .build();
-    }
-
-    @Bean
-    public RouteLocator gatewayToPatientRoute3(RouteLocatorBuilder builder) {
-        String uriPatient = UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .host(patientIp)
-                .port(patientPort)
-                .build()
-                .toUriString();
-
-        return builder.routes()
-                .route("patient_service_3", r -> r
-                        .method(HttpMethod.PUT)
-                        .and()
-                        .path("/patients/{id}")
-                        .uri(uriPatient)
-                )
-                .build();
-    }
-
-    /**
-     * Gateway to Note microservice routes :
-     * Redirections vers le microservice diagnosis-notes
-     */
-//    @Value("${NOTE_IP}")
-//    private String noteIp;
-    private String noteIp = "localHost";
-
-//    @Value("${NOTE_PORT}")
-//    private int notePort;
-    private int notePort = 8083;
-
-    @Bean
-    public RouteLocator gatewayToNoteRoute1(RouteLocatorBuilder builder) {
-        String uriNote = UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .host(noteIp)
-                .port(notePort)
-                .build()
-                .toUriString();
-
-        return builder.routes()
-                .route("note_service_1", r -> r
-                        .method(HttpMethod.GET)
-                        .and()
-                        .path("/notes/{id}")
-                        .uri(uriNote)
-                )
-                .build();
-    }
-
-    @Bean
-    public RouteLocator gatewayToNoteRoute2(RouteLocatorBuilder builder) {
-        String uriNote = UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .host(noteIp)
-                .port(notePort)
-                .build()
-                .toUriString();
-
-        return builder.routes()
-                .route("note_service_2", r -> r
-                        .method(HttpMethod.POST)
-                        .and()
-                        .path("/notes/{id}")
-                        .uri(uriNote)
-                )
-                .build();
-    }
-
-    /**
-     * Gateway to Risk microservice routes :
-     * Redirections vers le microservice diagnosis-risk
-     */
-//    @Value("${RISK_IP}")
-//    private String riskIp;
-    private String riskIp = "localHost";
-
-//    @Value("${RISK_PORT}")
-//    private int riskPort;
-    private int riskPort = 8085;
-
-    @Bean
-    public RouteLocator gatewayToRiskRout1(RouteLocatorBuilder builder) {
-        String uriRisk = UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .host(riskIp)
-                .port(riskPort)
-                .build()
-                .toUriString();
-
-        return builder.routes()
-                .route("risk_service_1", r -> r
-                        .method(HttpMethod.GET)
-                        .and()
-                        .path("/risks/{id}")
-                        .uri(uriRisk)
-                )
-                .build();
-    }
 
 }
 

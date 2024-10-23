@@ -16,14 +16,13 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 /**
  * Filter responsable de la gestion des tokens JWT transmis par les requetes HTTP entrantes.
- *
- * Il permet de vérifier si un token JWT est présent dans le Authorization header de la requete,
+ * <p>
+ * Il permet de vérifier si un token JWT est présent dans la requete,
  * de le valider, et de retourner un objet Authentication dans le
  * SecurityContextHolder basé sur les claims du token.
+ *
  * @see JwtUtil
  */
 @Component
@@ -37,50 +36,41 @@ public class JWTAuthenticationWebFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
-        //add cookie
-        ServerHttpRequest request = exchange.getRequest();
+        String jwtToken = null;
 
-        //add cookie
-        // 1. Try to get the JWT from the cookie
-        String jwtToken = exchange.getRequest().getCookies().getFirst("jwt-token") != null ?
-                exchange.getRequest().getCookies().getFirst("jwt-token").getValue() : null;
+        // Recuperation du token JWT si present
+        if (exchange.getRequest().getCookies().getFirst("jwt-token") != null) {
+            jwtToken = exchange.getRequest().getCookies().getFirst("jwt-token").getValue();
 
-        logger.info("Bearer token found in the cookie : " + jwtToken);
-
-
-        // 1. Try to get the JWT from the authentication header
-        if (jwtToken == null) {
-            List<String> authHeaders = request.getHeaders().getOrEmpty(HttpHeaders.AUTHORIZATION);
-            if (!authHeaders.isEmpty() && authHeaders.get(0).startsWith("Bearer ")) {
-                jwtToken = authHeaders.get(0).substring(7);  // Remove "Bearer " prefix
-            }
+            logger.info("JWT token trouvé dans la requete entrante: " + jwtToken);
         }
 
-//        //avant add cookie
-//        String token = extractToken(exchange);
-
-        logger.info("Bearer token found in incoming request : " + jwtToken);
-
-        // Validate the JWT jwtToken, build an authentication object with it , and put it in the security context
+        // Validation du token JWT et creation d'un objet authentication mis dans le security context
         if (jwtToken != null && jwtUtil.isTokenValid(jwtToken)) {
-            // Create an Authentication object if the JWT is valid
             Authentication authentication = jwtUtil.getAuthentication(jwtToken);
             SecurityContext securityContext = new SecurityContextImpl(authentication);
 
-            // Set the security context with the authenticated user
-            return chain.filter(exchange)
-                    .contextWrite(ReactiveSecurityContextHolder.withSecurityContext(Mono.just(securityContext)));
+            ReactiveSecurityContextHolder.withSecurityContext(Mono.just(securityContext));
+
+            // Inclusion du token JWT dans les requetes sortantes au niveau du Authorization header
+            ServerHttpRequest modifiedRequest = exchange.getRequest()
+                    .mutate()
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
+                    .build();
+
+            return chain.filter(exchange.mutate().request(modifiedRequest).build());
         }
 
-        // Continue the filter chain if no valid token is found
+        // Continuation de la filter chain si le JWT token n'est pas trouvé
+        logger.info("Pas de JWT token trouvé dans la requete entrante.");
+
         return chain.filter(exchange);
     }
 
-    // Extract the token from the Authorization header
     private String extractToken(ServerWebExchange exchange) {
         String bearerToken = exchange.getRequest().getHeaders().getFirst("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);  // Remove "Bearer " prefix
+            return bearerToken.substring(7);  // Suppression du prefix "Bearer "
         }
         return null;
     }
