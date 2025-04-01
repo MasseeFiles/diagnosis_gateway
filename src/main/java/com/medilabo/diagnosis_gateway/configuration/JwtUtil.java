@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
+    @Value("${JWT_SECRET}")
     private String SECRET;
 
     private static final long VALIDITY_DURATION = TimeUnit.MINUTES.toMillis(60);

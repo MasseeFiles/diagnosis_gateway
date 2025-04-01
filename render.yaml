@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: diagnosis-gateway
+    runtime: java
+    buildCommand: ./mvnw clean package
+    startCommand: java -jar target/*.jar
+    plan: free
+
+    envVars:
+      - key: JWT_SECRET
+        value: 9F44D4C546D4DA5B4JG8DF98GDF5DSF5V2XS68881F3
+
+      - key: VIEW_PORT
+        value: 8082
+
+      - key: VIEW_IP
+        value: "view-service.onrender.com"
+
+      # 🔐 Environment variables for DB access
+      - key: DB_USERNAME
+        value: root
+      - key: DB_PASSWORD
+        value: !#!4f84JNcY3Nl
+      - key: DB_URL
+        value: jdbc:mysql://crossover.proxy.rlwy.net:37146/railway
+

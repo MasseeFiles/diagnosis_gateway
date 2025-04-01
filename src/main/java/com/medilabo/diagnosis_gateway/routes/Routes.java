@@ -17,11 +17,11 @@ public class Routes {
      */
     @Value("${VIEW_IP}")
     private String viewIp;
-//    private String viewIp = "localHost";
+    //private String viewIp = "localHost";
 
     @Value("${VIEW_PORT}")
     private int viewPort;
-//    private int viewPort = 8082;
+    //private int viewPort = 8082;
 
     @Bean
     public RouteLocator gatewayToViewRoute1(RouteLocatorBuilder builder) {

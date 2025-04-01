@@ -35,6 +35,7 @@ public class JWTAuthenticationSuccessHandler implements ServerAuthenticationSucc
 
     @Value("${GATEWAY_PORT}")   // Transmis par le docker-compose
     private String redirectPort;
+//private String redirectPort = "8084";
 
     @Override
     public Mono onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
