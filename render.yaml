@@ -20,7 +20,7 @@ services:
       - key: DB_USERNAME
         value: root
       - key: DB_PASSWORD
-        value: !#!4f84JNcY3Nl
+        value: tppyBlQNBvCvVoUpufxRjoPOxgACcQHm
       - key: DB_URL
         value: jdbc:mysql://crossover.proxy.rlwy.net:37146/railway
 
